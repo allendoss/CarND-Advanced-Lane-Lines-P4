@@ -92,6 +92,14 @@ def window_mask(width,height,img_ref,center,level):
     output[int(img_ref.shape[0]-(level+1)*height):int(img_ref.shape[0]-(level)*height),max(0,int(center-width)):min(int(center+width),img_ref.shape[1])]=1
     return output
 
+def curvature(pol_a,y_pt):
+    ym_per_pix = 30/720 # meters per pixel in y dimension
+    xm_per_pix = 3.7/700 # meters per pixel in x dimension
+    A = pol_a[0]
+    B = pol_a[1]
+    R_curve = (1+(2*A*y_pt*ym_per_pix+B)**2)**1.5/np.absolute(2*A)
+    return R_curve
+
 def processImage(img):
       
     img=cv2.undistort(img,mtx,dist,None,mtx)
@@ -167,12 +175,13 @@ def processImage(img):
     result = cv2.addWeighted(img,1.0,road_warped,1.0,0.0)
     
     # Radius of curvature
-    ym_per_pix=curveCenters.ymPerPix
-    xm_per_pix=curveCenters.xmPerPix
+    ym_per_pix=30/720
+    xm_per_pix=3.7/700
     curve_fit_cr=np.polyfit(np.array(res_yvals,np.float32)*ym_per_pix,np.array(leftx,np.float32)*xm_per_pix,2)
+    right_curve_fit_cr=np.polyfit(np.array(res_yvals,np.float32)*ym_per_pix,np.array(rightx,np.float32)*xm_per_pix,2)
     # left radius of curvature
     curvead=((1+(2*curve_fit_cr[0]*yvals[-1]*ym_per_pix+curve_fit_cr[1])**2)**1.5)/np.absolute(2*curve_fit_cr[0])
-    
+    right_curvead=((1+(2*right_curve_fit_cr[0]*yvals[-1]*ym_per_pix+right_curve_fit_cr[1])**2)**1.5)/np.absolute(2*right_curve_fit_cr[0])
     # Offset of the car on road
     camera_center=(left_fitx[-1]+right_fitx[-1])/2
     center_diff=(camera_center-warped.shape[1]/2)*xm_per_pix
@@ -180,7 +189,8 @@ def processImage(img):
     if center_diff<=0:
         side_pos='right'
     cv2.putText(result,'Radius of Curvature='+str(round(curvead,3))+'(m)',(50,50),cv2.FONT_HERSHEY_SIMPLEX,1,(255,255,255),2)
-    cv2.putText(result,'Vehicle is '+str(abs(round(center_diff,3)))+'m '+side_pos+' of center',(50,100),cv2.FONT_HERSHEY_SIMPLEX,1,(255,255,255),2)
+    cv2.putText(result,'Radius of Curvature='+str(round(right_curvead,3))+'(m)',(50,100),cv2.FONT_HERSHEY_SIMPLEX,1,(255,255,255),2)
+    cv2.putText(result,'Vehicle is '+str(abs(round(center_diff,3)))+'m '+side_pos+' of center',(50,150),cv2.FONT_HERSHEY_SIMPLEX,1,(255,255,255),2)
     
     return result
 
