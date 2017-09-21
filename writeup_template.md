@@ -44,20 +44,20 @@ I start by preparing "object points", which will be the (x, y, z) coordinates of
 
 I then used the output `objpoints` and `imgpoints` to compute the camera calibration and distortion coefficients using the `cv2.calibrateCamera()` function.  I applied this distortion correction to the test image using the `cv2.undistort()` function and obtained this result:
 
-![alt text][writeup_images/undistortion.jpg]
+![alt text](writeup_images/undistortion.jpg)
 
 ### Pipeline (single images)
 
 #### 1. Provide an example of a distortion-corrected image.
 
 To demonstrate this step, I will describe how I apply the distortion correction to one of the test images like this one:
-![alt text][writeup_images/undistort_image.jpg]
+![alt text](writeup_images/undistort_image.jpg)
 
 #### 2. Describe how (and identify where in your code) you used color transforms, gradients or other methods to create a thresholded binary image.  Provide an example of a binary image result.
 
 I used a combination of color and gradient thresholds to generate a binary image (thresholding steps at lines 18 through 88 in 'video.py').  Here's an example of my output for this step.  (note: this is not actually from one of the test images)
 
-![alt text][writeup_images/sobel_thresh.jpg]
+![alt text](writeup_images/sobel_thresh.jpg)
 
 #### 3. Describe how (and identify where in your code) you performed a perspective transform and provide an example of a transformed image.
 
@@ -71,7 +71,7 @@ dst=np.float32([[offset,0],[img_size[0]-offset,0],[img_size[0]-offset,img_size[1
 
 I verified that my perspective transform was working as expected by drawing the `src` and `dst` points onto a test image and its warped counterpart to verify that the lines appear parallel in the warped image.
 
-![alt text][writeup_images/perspective.jpg]
+![alt text](writeup_images/perspective.jpg)
 
 #### 4. Describe how (and identify where in your code) you identified lane-line pixels and fit their positions with a polynomial?
 I used a window sliding and convolution approach as described in the lectures in my code ('tracker.py'). To find the target pixels a window template is used to go over the desired region (one window convolves over another to generate a new transformation). The result is a trapezoidal window.
@@ -82,7 +82,7 @@ I used a window sliding and convolution approach as described in the lectures in
 5. Average over all of the above centroids
 A polyfit function was used to  fit my lane lines with a 2nd order polynomial as seen on line 172 on video.py.
 
-![alt text][writeup_images/tracked5.jpg]
+![alt text](writeup_images/tracked5.jpg)
 
 #### 5. Describe how (and identify where in your code) you calculated the radius of curvature of the lane and the position of the vehicle with respect to center.
 
@@ -92,7 +92,7 @@ I did this in lines 174 through 183 in my code in `video.py`. I assumed that the
 
 Here is an example of my result on a test image:
 
-![alt text][writeup_images/filledpoly.jpg]
+![alt text](writeup_images/filledpoly.jpg)
 
 ---
 
@@ -108,5 +108,5 @@ Here's a [link to my video result](output_video.mp4)
 
 #### 1. Briefly discuss any problems / issues you faced in your implementation of this project.  Where will your pipeline likely fail?  What could you do to make it more robust?
 
-First, the on board camera metrics and distortion coefficients were obtained to undistort the images. The color space is tranformed from RGB to HLS to HSV to find white and yellow lines. Sobel threshold is used to detect edges. Finally I put it together by a color threshold and saving a binary output image. The lane lines were later obtained using a sliding and convolution approach.
+First, the on board camera metrics and distortion coefficients were obtained to undistort the images. The color space is transformed from RGB to HLS to HSV to find white and yellow lines. Sobel threshold is used to detect edges. Finally I put it together by a color threshold and saving a binary output image. The lane lines were later obtained using a sliding and convolution approach.
 The code fails to perform well in situations that have too many artifacts in image such as trees. Curvatures of very high degree also fail but this can be solved by choosing a polynomial of higher degree
