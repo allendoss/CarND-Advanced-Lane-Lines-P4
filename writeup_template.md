@@ -92,7 +92,7 @@ I did this in lines 174 through 183 in my code in `video.py`. I assumed that the
 
 Here is an example of my result on a test image:
 
-![alt text](writeup_images/filledpoly.jpg)
+![alt text](writeup_images/filledpoly.png)
 
 ---
 
